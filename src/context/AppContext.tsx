@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
 
 export type UserRole = 'student' | 'hr' | null;
 
@@ -28,7 +27,7 @@ interface ResumeData {
 }
 
 interface AppContextType {
-  user: User | null;
+  user: any; // authentication removed
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
   resumeData: ResumeData | null;
@@ -39,7 +38,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [userRole, setUserRoleState] = useState<UserRole>(() => {
     const savedRole = localStorage.getItem('userRole');
     return (savedRole as UserRole) || null;
@@ -56,17 +55,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (!firebaseUser) {
-        setUserRole(null);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   return (
     <AppContext.Provider value={{ user, userRole, setUserRole, resumeData, setResumeData, loading }}>

@@ -9,7 +9,8 @@ export default function Landing() {
   const navigate = useNavigate();
 
   const handleRoleSelect = (role: 'student' | 'hr') => {
-    navigate('/signup', { state: { role } });
+    setUserRole(role);
+    navigate(role === 'student' ? '/student' : '/hr');
   };
 
   return (

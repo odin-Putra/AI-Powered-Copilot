@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { LogOut, User, Briefcase, LayoutDashboard, FileText } from 'lucide-react';
 import { motion } from 'motion/react';
-import { signOut } from 'firebase/auth';
-import { auth } from '../lib/firebase';
 import NeuralBackground from './NeuralBackground';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -12,14 +10,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setUserRole(null);
-      navigate('/signin');
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+  const handleLogout = () => {
+    setUserRole(null);
+    navigate('/');
   };
 
   const isPublic = location.pathname === '/';
@@ -88,21 +81,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <button
                   onClick={handleLogout}
                   className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
-                  title="Logout"
+                  title="Clear role"
                 >
                   <LogOut size={20} />
                 </button>
               </div>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Link to="/signin" className="text-sm font-medium text-slate-500 hover:text-slate-900">
-                  Sign In
-                </Link>
-                <Link to="/signup" className="bg-sage-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sage-700 transition-all shadow-sm">
-                  Get Started
-                </Link>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       </header>
